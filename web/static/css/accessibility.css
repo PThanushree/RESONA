@@ -1,0 +1,55 @@
+/*
+ * RESONA Accessibility Utilities
+ * Specialized WCAG 2.2 helper classes, ARIA live-region styling,
+ * screen-reader only elements, and high-contrast text rendering.
+ */
+
+/* Visually hidden but accessible to screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Ensure focus is never hidden for keyboard users */
+:focus-visible {
+  outline: var(--focus-ring) !important;
+  outline-offset: var(--focus-offset) !important;
+}
+
+/* Live Announcement Region */
+#aria-live-polite, #aria-live-assertive {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode adjustments */
+@media (forced-colors: active) {
+  .btn, .tree-node, .pane, .app-header, .app-footer {
+    border: 2px solid ButtonText !important;
+  }
+  .tree-node.selected {
+    background-color: Highlight !important;
+    color: HighlightText !important;
+  }
+}

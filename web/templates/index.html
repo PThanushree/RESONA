@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RESONA: Accessible Programming & Audio Code Comprehension System</title>
+  <meta name="description" content="Audio-Augmented Accessible Programming System for Blind and Visually Impaired Programmers - KSCST 50th Series, JSS Science & Technology University, Mysuru">
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/static/css/accessibility.css">
+</head>
+<body class="theme-dark">
+
+  <!-- Screen Reader Skip Navigation Link -->
+  <a href="#code-editor" class="skip-link">Skip directly to Code Editor (or press F6)</a>
+
+  <!-- ARIA Live Regions for NVDA / JAWS / Screen Readers -->
+  <div id="aria-live-polite" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div id="aria-live-assertive" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+  <div class="app-container">
+
+    <!-- Header / Banner Landmark -->
+    <header class="app-header" role="banner">
+      <div class="brand-section">
+        <h1 class="brand-title">
+          <span>&#127911; RESONA</span>
+          <span class="brand-badge">KSCST 50th Series &bull; JSS STU Mysuru</span>
+        </h1>
+      </div>
+
+      <div class="header-controls" role="toolbar" aria-label="Editor controls">
+        <!-- Example Program Selector -->
+        <label for="example-code-select" class="sr-only">Load Demonstration Code Example</label>
+        <select id="example-code-select" class="select-input" aria-label="Load demonstration algorithm">
+          <option value="01_binary_search.py">01: Binary Search (Loop &amp; Branch Earcons)</option>
+          <option value="02_recursion_factorial.py">02: Factorial Recursion (Stack Pitch)</option>
+          <option value="03_nested_loops_bubblesort.py">03: Bubble Sort (Nested Loop Sonification)</option>
+          <option value="04_buggy_off_by_one.py">04: Buggy Off-by-One (AI Bug Diagnosis)</option>
+          <option value="05_zero_division.py">05: Zero Division Crash (Exception Trace)</option>
+          <option value="06_student_grading.py">06: Student Grading (Branching Sonification)</option>
+        </select>
+
+        <!-- Action Buttons with Keybindings -->
+        <button id="btn-run-code" class="btn btn-primary" aria-label="Run Code and Sonify, Shortcut F5">
+          &#9654; Run &amp; Sonify (F5)
+        </button>
+
+        <button id="btn-hear-outline" class="btn" aria-label="Hear Structural Code Outline, Shortcut Alt+O">
+          &#128227; Outline (Alt+O)
+        </button>
+
+        <button id="btn-audio-settings" class="btn" aria-label="Adaptive Audio Settings, Shortcut Alt+S">
+          &#9881; Audio Settings (Alt+S)
+        </button>
+
+        <button id="btn-toggle-theme" class="btn" aria-label="Cycle High Contrast Accessibility Theme, Shortcut Alt+T">
+          &#127912; Contrast (Alt+T)
+        </button>
+
+        <button id="btn-toggle-audio" class="btn" aria-label="Toggle Audio Sonification">
+          &#128266; Audio Active
+        </button>
+
+        <button id="btn-help-shortcuts" class="btn" aria-label="Keyboard Shortcuts Help, Shortcut Alt+H">
+          &#9000; Help (Alt+H)
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Accessible Workspace Grid -->
+    <main id="main-content" class="main-workspace" role="main">
+
+      <!-- PANE 1: AST Structural Code Navigator (Left) -->
+      <section class="pane" aria-labelledby="pane-ast-title">
+        <header class="pane-header">
+          <h2 id="pane-ast-title" class="pane-title">
+            <span>&#128065; AST Hierarchy</span>
+          </h2>
+          <span style="font-size:0.75rem;opacity:0.7;">Use &uarr;&darr; keys</span>
+        </header>
+        <div class="pane-content">
+          <div id="ast-tree-view" class="ast-tree-container" role="tree" aria-label="Hierarchical code structure tree">
+            <!-- Dynamic AST Nodes injected by ast_navigator.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- PANE 2: Keyboard-First Accessible Code Editor (Center) -->
+      <section class="pane" aria-labelledby="pane-editor-title">
+        <header class="pane-header">
+          <h2 id="pane-editor-title" class="pane-title">
+            <span>&#9997; Accessible Editor</span>
+          </h2>
+          <span id="editor-header-depth" style="font-size:0.75rem;opacity:0.7;">Audio pitch on &uarr;&darr; navigation</span>
+        </header>
+        <div class="editor-wrapper">
+          <label for="code-editor" class="sr-only">Python source code editing area. Indentation pitch plays as you navigate lines.</label>
+          <textarea id="code-editor" class="code-textarea" spellcheck="false" aria-multiline="true" aria-label="Python source code editor" placeholder="Write or paste your Python code here...">def binary_search(arr, target):
+    low = 0
+    high = len(arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1
+
+numbers = [2, 5, 8, 12, 16, 23, 38, 56, 72]
+key = 23
+result = binary_search(numbers, key)
+print("Target", key, "found at index:", result)
+</textarea>
+        </div>
+      </section>
+
+      <!-- PANE 3: Context Engine, Debugger & AI Narrator (Right) -->
+      <section class="pane" aria-labelledby="pane-context-title">
+        <div class="tabs-header" role="tablist" aria-label="Tool views">
+          <button class="tab-btn active" role="tab" aria-selected="true" data-tab="tab-ai-narrator" id="tab-btn-ai">
+            &#129302; AI Narrator
+          </button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="tab-scopes" id="tab-btn-scopes">
+            &#128065; Variable Scopes
+          </button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="tab-debugger" id="tab-btn-debug">
+            &#9881; Debugger &amp; Soundscape
+          </button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="tab-console" id="tab-btn-console">
+            &#128187; Console Output
+          </button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="tab-legend" id="tab-btn-legend">
+            &#127926; Earcon Legend
+          </button>
+        </div>
+
+        <div class="pane-content">
+
+          <!-- TAB 1: AI Code Narrator & Context Engine -->
+          <div id="tab-ai-narrator" class="tab-pane" role="tabpanel" aria-labelledby="tab-btn-ai">
+            <div id="ai-narrative-display">
+              <div class="ai-narrative-card">
+                <div class="ai-narrative-title">Press F5 to Run and Analyze Code</div>
+                <div class="ai-narrative-body">
+                  RESONA will parse the AST structure, execute trace instrumentation, and generate contextual spoken explanations.
+                </div>
+              </div>
+            </div>
+
+            <!-- Interactive AI Assistant Box (Phase 5) -->
+            <div style="margin-top:16px;padding:12px;background:var(--bg-tertiary);border-radius:var(--radius-sm);border:1px solid var(--border-color);">
+              <label for="ai-question-input" style="font-weight:700;font-size:0.88rem;display:block;margin-bottom:6px;">
+                &#128172; Ask RESONA AI Assistant:
+              </label>
+              <div style="display:flex;gap:6px;">
+                <input id="ai-question-input" type="text" class="select-input" style="flex:1;" placeholder="e.g. Explain loop logic, why did it crash?, or how to optimize" />
+                <button id="btn-submit-ai-question" class="btn btn-primary" aria-label="Submit question to AI">
+                  Ask AI
+                </button>
+              </div>
+              <div id="ai-answer-box" style="margin-top:8px;font-size:0.88rem;line-height:1.5;display:none;padding:8px;background:var(--bg-primary);border-radius:4px;border:1px solid var(--border-color);"></div>
+            </div>
+          </div>
+
+          <!-- TAB 2: Variable Scope Inspector (Objective 2 / Phase 3) -->
+          <div id="tab-scopes" class="tab-pane" style="display:none;" role="tabpanel" aria-labelledby="tab-btn-scopes">
+            <h3 style="font-size:0.9rem;text-transform:uppercase;margin-bottom:8px;">Lexical Variable Scopes</h3>
+            <div id="scopes-container" style="display:flex;flex-direction:column;gap:8px;">
+              <div style="opacity:0.7;font-style:italic;">Run analysis (F5) to inspect variable scopes.</div>
+            </div>
+          </div>
+
+          <!-- TAB 3: Time-Travel Debugger & Stepper -->
+          <div id="tab-debugger" class="tab-pane" style="display:none;" role="tabpanel" aria-labelledby="tab-btn-debug">
+            <div class="debugger-stepper" role="toolbar" aria-label="Debugger stepping controls">
+              <button id="btn-step-prev" class="btn" aria-label="Step Backward, Shift+F10">&#9664; Step Back</button>
+              <button id="btn-step-next" class="btn btn-primary" aria-label="Step Forward, F10">Step Next &#9654;</button>
+              <button id="btn-play-soundscape" class="btn btn-success" aria-label="Play Continuous Audio Soundscape, Ctrl+Shift+P">&#9658; Play Soundscape</button>
+              <button id="btn-jump-error" class="btn btn-danger" aria-label="Jump directly to Error">&#9888; Jump to Error</button>
+              
+              <div class="step-info" aria-live="polite">
+                Step <span id="debug-curr-step">0</span> / <span id="debug-total-steps">0</span> | Line: <span id="debug-curr-line">-</span>
+              </div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <h3 style="font-size:0.9rem;text-transform:uppercase;margin-bottom:6px;">Call Stack</h3>
+              <div id="call-stack-view" class="console-output" style="min-height:50px;padding:8px;">
+                No active frame
+              </div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <h3 style="font-size:0.9rem;text-transform:uppercase;margin-bottom:6px;">Variable Watch Table</h3>
+              <table class="data-table" aria-label="Variables in scope at current step">
+                <thead>
+                  <tr>
+                    <th scope="col">Variable</th>
+                    <th scope="col">Current Value</th>
+                  </tr>
+                </thead>
+                <tbody id="variables-table-body">
+                  <tr>
+                    <td colspan="2" style="opacity:0.6;font-style:italic;">Run program to inspect variables</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TAB 4: Terminal Console Output -->
+          <div id="tab-console" class="tab-pane" style="display:none;" role="tabpanel" aria-labelledby="tab-btn-console">
+            <h3 style="font-size:0.9rem;text-transform:uppercase;margin-bottom:8px;">Standard Output</h3>
+            <pre id="console-output-view" class="console-output" role="log" aria-label="Terminal output log"></pre>
+          </div>
+
+          <!-- TAB 5: Audio Sonification Legend & Earcon Tester -->
+          <div id="tab-legend" class="tab-pane" style="display:none;" role="tabpanel" aria-labelledby="tab-btn-legend">
+            <h3 style="font-size:0.9rem;text-transform:uppercase;margin-bottom:8px;">Interactive Earcon Auditory Guide</h3>
+            <p style="font-size:0.85rem;margin-bottom:12px;opacity:0.8;">Click any acoustic earcon below to audition its sound signature:</p>
+
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <button class="btn" onclick="window.resonaAudio.playEarcon('function_entry')">
+                &#9654; <strong>Function Entry:</strong> Ascending Triad (C4-E4-G4)
+              </button>
+              <button class="btn" onclick="window.resonaAudio.playEarcon('loop_iteration')">
+                &#9654; <strong>Loop Iteration:</strong> Marimba Double-Tap
+              </button>
+              <button class="btn" onclick="window.resonaAudio.playEarcon('branch_true')">
+                &#9654; <strong>Branch True:</strong> Crystalline Bell (B5)
+              </button>
+              <button class="btn" onclick="window.resonaAudio.playEarcon('branch_false')">
+                &#9654; <strong>Branch False:</strong> Subdued Blip (F4)
+              </button>
+              <button class="btn" onclick="window.resonaAudio.playEarcon('variable_change')">
+                &#9654; <strong>Variable Mutation:</strong> Water Droplet Ping (G5)
+              </button>
+              <button class="btn" onclick="window.resonaAudio.playEarcon('function_return')">
+                &#9654; <strong>Function Return:</strong> Descending Cadence (G4-E4-C4)
+              </button>
+              <button class="btn" onclick="window.resonaAudio.playEarcon('runtime_error')">
+                &#9654; <strong>Runtime Error:</strong> Dissonant Tritone Alarm (C3-C4-F#4)
+              </button>
+              <button class="btn" onclick="window.resonaAudio.playEarcon('execution_success')">
+                &#9654; <strong>Execution Success:</strong> Sparkling Major Chord
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer / Status Bar Landmark -->
+    <footer class="app-footer" role="contentinfo">
+      <div>
+        <span class="status-indicator" aria-hidden="true"></span>
+        <span id="footer-status-text">Ready &bull; RESONA v1.0</span>
+      </div>
+      <div>
+        <span id="footer-cursor-line" style="font-family:var(--font-mono);margin-right:16px;">Line: 1 (Depth 0)</span>
+        <span>JSS Science and Technology University &bull; KSCST 50th Series</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ADAPTIVE AUDIO SETTINGS MODAL (Objective 6 / Deliverable 7) -->
+  <div id="modal-settings" class="sr-only" role="dialog" aria-modal="true" aria-labelledby="modal-settings-title" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:99999;">
+    <div style="background:var(--bg-secondary);border:2px solid var(--accent-primary);border-radius:var(--radius-md);width:520px;max-width:92%;padding:20px;box-shadow:0 10px 25px rgba(0,0,0,0.8);max-height:90vh;overflow-y:auto;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h2 id="modal-settings-title" style="font-size:1.15rem;font-weight:700;">&#9881; Adaptive Audio Settings</h2>
+        <button id="btn-close-settings" class="btn" aria-label="Close Settings (Escape)">Close</button>
+      </div>
+
+      <!-- Presets -->
+      <div style="margin-bottom:14px;">
+        <div style="font-weight:700;margin-bottom:6px;font-size:0.85rem;">Quick Accessibility Presets:</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn" onclick="window.resonaApp.applyPreset('beginner')">Beginner (Verbose Speech)</button>
+          <button class="btn" onclick="window.resonaApp.applyPreset('standard')">Standard (Balanced)</button>
+          <button class="btn" onclick="window.resonaApp.applyPreset('expert')">Expert (Minimal Cues)</button>
+          <button class="btn" onclick="window.resonaApp.applyPreset('sonification_only')">Sonification Only</button>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;font-size:0.88rem;">
+        <div>
+          <label for="set-verbosity" style="font-weight:700;display:block;margin-bottom:4px;">Spoken Explanation Verbosity:</label>
+          <select id="set-verbosity" class="select-input" style="width:100%;">
+            <option value="verbose">Verbose: Complete spoken details on every step</option>
+            <option value="standard">Standard: Essential updates &amp; variable changes</option>
+            <option value="minimal">Minimal: Error alerts only, reliance on earcons</option>
+            <option value="silent">Silent: Speech muted, pure sonification</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="set-mode" style="font-weight:700;display:block;margin-bottom:4px;">Audio Output Mode:</label>
+          <select id="set-mode" class="select-input" style="width:100%;">
+            <option value="hybrid">Hybrid (Musical Earcons + Speech Synthesis)</option>
+            <option value="sonification_only">Sonification Only (Musical Cues)</option>
+            <option value="speech_only">Speech Only (Text-to-Speech)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="set-earcon-vol" style="font-weight:700;display:flex;justify-content:space-between;">
+            <span>Earcon Volume:</span>
+            <span id="lbl-earcon-vol">50%</span>
+          </label>
+          <input type="range" id="set-earcon-vol" min="0" max="100" value="50" style="width:100%;" />
+        </div>
+
+        <div>
+          <label for="set-speech-rate" style="font-weight:700;display:flex;justify-content:space-between;">
+            <span>Speech Rate (Speed):</span>
+            <span id="lbl-speech-rate">1.15x</span>
+          </label>
+          <input type="range" id="set-speech-rate" min="50" max="250" value="115" style="width:100%;" />
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px;">
+          <label style="display:flex;align-items:center;gap:8px;">
+            <input type="checkbox" id="chk-indent-audio" checked />
+            <span>Play pitch scale on line cursor navigation</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;">
+            <input type="checkbox" id="chk-stereo-pan" checked />
+            <span>Stereo spatial panning across headphones</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;">
+            <input type="checkbox" id="chk-var-chimes" checked />
+            <span>Audio chimes on variable mutations</span>
+          </label>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;text-align:right;">
+        <button id="btn-save-settings" class="btn btn-primary">Save &amp; Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="/static/js/audio_synth.js"></script>
+  <script src="/static/js/speech_narrator.js"></script>
+  <script src="/static/js/ast_navigator.js"></script>
+  <script src="/static/js/debugger_ui.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
